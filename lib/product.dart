@@ -7,7 +7,7 @@ class Product {
 }
 
 typedef void CartChangedCallback(Product product, bool inCart);
-typedef void SwipeCallback(Product product);
+typedef bool SwipeCallback(Product product);
 
 class ShoppingListItem extends StatelessWidget {
   final Product product;
@@ -40,13 +40,14 @@ class ShoppingListItem extends StatelessWidget {
     return Dismissible(
       key: ValueKey(product.name),
       child: listTile,
-      onDismissed: (direction) => {
+      confirmDismiss: (direction) async {
         if(direction == DismissDirection.startToEnd){
-          this.onSwipeStartToEnd(product)
-        },
-        if(direction == DismissDirection.endToStart){
-          this.onSwipeEndToStart(product)
+          return this.onSwipeStartToEnd(product);
         }
+        if(direction == DismissDirection.endToStart){
+          return this.onSwipeEndToStart(product);
+        }
+        return false;
       },
       direction: DismissDirection.horizontal,
       background: Container(

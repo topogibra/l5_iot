@@ -159,15 +159,17 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void onSwipeStartToEnd(Product product) {
+  bool onSwipeStartToEnd(Product product) {
     setState(() {
       shoppingCart.remove(product);
     });
+    return true;
   }
 
-  void onSwipeEndToStart(Product product) {
+  bool onSwipeEndToStart(Product product) {
     setState(() {
       favorites.add(product);
     });
+    return false;
   }
 }
