@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:l5_iot/pages/prouctPage.dart';
 import 'package:l5_iot/product.dart';
 
 void main() {
@@ -196,10 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void onCartChanged(Product product, bool inCart) {
-    setState(() {
-      // if (!inCart) shoppingCart.add(product);
-      shoppingCart.remove(product);
-    });
+    Navigator.push(context,MaterialPageRoute(builder: (context) => ProductPage(key: Key(product.name),product: product)));
   }
 
   bool onSwipeStartToEnd(Product product) {
