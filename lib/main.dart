@@ -2,7 +2,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:l5_iot/pages/prouctPage.dart';
+import 'package:l5_iot/pages/productPage.dart';
 import 'package:l5_iot/product.dart';
 
 void main() {
@@ -56,9 +56,17 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController priceTextFieldController =
       TextEditingController();
   final TextEditingController qttyTextFieldController = TextEditingController();
+  final TextEditingController searchFilterController = TextEditingController();
 
-  List<Product> shoppingCart = [];
+  List<Product> shoppingCart = [
+    Product(name: "apples", price: 2.0, quantity: 4),
+    Product(name: "pears", price: 2.0, quantity: 4)
+  ];
   List<Product> favorites = [];
+  List<Product> searchingList = [];
+
+  Widget searchBar;
+  bool searchIcon = true;
 
   @override
   Widget build(BuildContext context) {
@@ -68,11 +76,74 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    List<Product> listProducts = (searchIcon) ? shoppingCart : searchingList;
+    var listView = Expanded(
+      child: ListView.builder(
+          itemCount: listProducts.length,
+          itemBuilder: (context, index) {
+            return ShoppingListItem(
+              product: listProducts[index],
+              inCart: listProducts.contains(listProducts[index]),
+              onCartChanged: onCartChanged,
+              onSwipeEndToStart: onSwipeEndToStart,
+              onSwipeStartToEnd: onSwipeStartToEnd,
+            );
+          }),
+    );
+
+    if (searchBar == null) searchBar = Text(widget.title);
+
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: searchBar,
+        actions: [
+          if (this.searchIcon)
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    this.searchingList = [];
+                    this.searchIcon = false;
+                    this.searchBar = Container(
+                      width: double.infinity,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Center(
+                        child: TextField(
+                          decoration: InputDecoration(
+                              hintText: 'Search...',
+                              contentPadding: EdgeInsets.all(5),
+                              suffixIcon: IconButton(
+                                icon: Icon(Icons.cancel),
+                                onPressed: () {
+                                  setState(() {
+                                    this.searchIcon = true;
+                                    this.searchBar = Text(widget.title);
+                                    this.searchFilterController.clear();
+                                  });
+                                },
+                              )),
+                          controller: this.searchFilterController,
+                          onChanged: (String value) async {
+                            this.searchingList.clear();
+                            this.shoppingCart.forEach((product) {
+                              if (product.name.contains(value)) {
+                                setState(() {
+                                  this.searchingList.add(product);
+                                });
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  });
+                },
+                icon: Icon(Icons.search))
+        ],
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -100,19 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: shoppingCart.length,
-                  itemBuilder: (context, index) {
-                    return ShoppingListItem(
-                      product: shoppingCart[index],
-                      inCart: shoppingCart.contains(shoppingCart[index]),
-                      onCartChanged: onCartChanged,
-                      onSwipeEndToStart: onSwipeEndToStart,
-                      onSwipeStartToEnd: onSwipeStartToEnd,
-                    );
-                  }),
-            )
+            listView
           ],
         ),
       ),
@@ -197,7 +256,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void onCartChanged(Product product, bool inCart) {
-    Navigator.push(context,MaterialPageRoute(builder: (context) => ProductPage(key: Key(product.name),product: product)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ProductPage(key: Key(product.name), product: product)));
   }
 
   bool onSwipeStartToEnd(Product product) {
