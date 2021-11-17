@@ -1,9 +1,13 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class Product {
   final String name;
+  final double price;
+  final double quantity;
 
-  const Product({@required this.name});
+  const Product({@required this.name, @required this.price, @required this.quantity});
 }
 
 typedef void CartChangedCallback(Product product, bool inCart);
@@ -16,13 +20,12 @@ class ShoppingListItem extends StatelessWidget {
   final SwipeCallback onSwipeStartToEnd;
   final SwipeCallback onSwipeEndToStart;
 
-  ShoppingListItem({
-    @required this.product,
-    @required this.inCart,
-    @required this.onCartChanged,
-    @required this.onSwipeStartToEnd,
-    @required this.onSwipeEndToStart
-  });
+  ShoppingListItem(
+      {@required this.product,
+      @required this.inCart,
+      @required this.onCartChanged,
+      @required this.onSwipeStartToEnd,
+      @required this.onSwipeEndToStart});
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +44,10 @@ class ShoppingListItem extends StatelessWidget {
       key: ValueKey(product.name),
       child: listTile,
       confirmDismiss: (direction) async {
-        if(direction == DismissDirection.startToEnd){
+        if (direction == DismissDirection.startToEnd) {
           return this.onSwipeStartToEnd(product);
         }
-        if(direction == DismissDirection.endToStart){
+        if (direction == DismissDirection.endToStart) {
           return this.onSwipeEndToStart(product);
         }
         return false;

@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:l5_iot/product.dart';
 
 void main() {
@@ -49,6 +52,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController textFieldController = TextEditingController();
+  final TextEditingController priceTextFieldController =
+      TextEditingController();
+  final TextEditingController qttyTextFieldController = TextEditingController();
+
   List<Product> shoppingCart = [];
   List<Product> favorites = [];
 
@@ -116,6 +123,37 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<AlertDialog> displayDialog(BuildContext context) {
+    var doubleInputFormattter = <TextInputFormatter>[
+      FilteringTextInputFormatter.allow(RegExp(r"[0-9.]")),
+      TextInputFormatter.withFunction((oldValue, newValue) {
+        try {
+          final text = newValue.text;
+          if (text.isNotEmpty) double.parse(text);
+          return newValue;
+        } catch (e) {}
+        return oldValue;
+      })
+    ];
+    Column textfields = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextField(
+          controller: textFieldController,
+          decoration: InputDecoration(hintText: 'Product name'),
+        ),
+        TextField(
+            controller: priceTextFieldController,
+            decoration: InputDecoration(suffixIcon: Icon(Icons.euro)),
+            keyboardType: TextInputType.number,
+            inputFormatters: doubleInputFormattter),
+        TextField(
+            controller: qttyTextFieldController,
+            decoration: InputDecoration(hintText: 'Product quantity'),
+            keyboardType: TextInputType.number,
+            inputFormatters: doubleInputFormattter),
+      ],
+    );
+
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -124,16 +162,21 @@ class _MyHomePageState extends State<MyHomePage> {
               "Add a new product to your list",
               textAlign: TextAlign.center,
             ),
-            content: TextField(
-              controller: textFieldController,
-            ),
+            content: textfields,
             actions: [
               TextButton(
                 onPressed: () {
                   // print(textFieldController.text);
-                  if (textFieldController.text.trim() != "")
+                  if (textFieldController.text.trim() != "" &&
+                      priceTextFieldController.text.isNotEmpty)
                     setState(() {
-                      shoppingCart.add(Product(name: textFieldController.text));
+                      shoppingCart.add(
+                        Product(
+                            name: textFieldController.text,
+                            price: double.parse(priceTextFieldController.text),
+                            quantity:
+                                double.parse(qttyTextFieldController.text)),
+                      );
                     });
 
                   textFieldController.clear();
