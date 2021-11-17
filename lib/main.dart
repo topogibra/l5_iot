@@ -64,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
   List<Product> favorites = [];
   List<Product> searchingList = [];
+  int bottomIndex = 0;
 
   Widget searchBar;
   bool searchIcon = true;
@@ -77,6 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     List<Product> listProducts = (searchIcon) ? shoppingCart : searchingList;
+    listProducts = (bottomIndex == 1) ? favorites : listProducts;
     var listView = Expanded(
       child: ListView.builder(
           itemCount: listProducts.length,
@@ -87,6 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onCartChanged: onCartChanged,
               onSwipeEndToStart: onSwipeEndToStart,
               onSwipeStartToEnd: onSwipeStartToEnd,
+              notDismiss: bottomIndex == 1,
             );
           }),
     );
@@ -151,26 +154,27 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(15),
-              child: Row(
-                children: [
-                  Image.asset(
-                    "assets/toDo.png",
-                    width: 50,
-                    height: 50,
-                  ),
-                  Text(
-                    "Products you have to buy",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.amber,
-                      fontSize: 25,
+            if (bottomIndex != 1)
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "assets/toDo.png",
+                      width: 50,
+                      height: 50,
                     ),
-                  )
-                ],
+                    Text(
+                      "Products you have to buy",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.amber,
+                        fontSize: 25,
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
             listView
           ],
         ),
@@ -178,6 +182,19 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => displayDialog(context),
         child: Icon(Icons.add),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart), label: "Cart"),
+          BottomNavigationBarItem(icon: Icon(Icons.star), label: "Favorites"),
+        ],
+        currentIndex: bottomIndex,
+        onTap: (index) {
+          setState(() {
+            this.bottomIndex = index;
+          });
+        },
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

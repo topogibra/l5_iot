@@ -7,7 +7,8 @@ class Product {
   final double price;
   final double quantity;
 
-  const Product({@required this.name, @required this.price, @required this.quantity});
+  const Product(
+      {@required this.name, @required this.price, @required this.quantity});
 }
 
 typedef void CartChangedCallback(Product product, bool inCart);
@@ -19,13 +20,15 @@ class ShoppingListItem extends StatelessWidget {
   final CartChangedCallback onCartChanged;
   final SwipeCallback onSwipeStartToEnd;
   final SwipeCallback onSwipeEndToStart;
+  final bool notDismiss;
 
   ShoppingListItem(
       {@required this.product,
       @required this.inCart,
       @required this.onCartChanged,
       @required this.onSwipeStartToEnd,
-      @required this.onSwipeEndToStart});
+      @required this.onSwipeEndToStart,
+      this.notDismiss = false});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +43,7 @@ class ShoppingListItem extends StatelessWidget {
       },
     );
 
-    return Dismissible(
+    return (notDismiss) ? listTile : Dismissible(
       key: ValueKey(product.name),
       child: listTile,
       confirmDismiss: (direction) async {
