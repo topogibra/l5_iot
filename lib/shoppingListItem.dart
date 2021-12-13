@@ -14,11 +14,11 @@ class ShoppingListItem extends StatelessWidget {
   final bool notDismiss;
 
   ShoppingListItem(
-      {@required this.product,
-      @required this.inCart,
-      @required this.onCartChanged,
-      @required this.onSwipeStartToEnd,
-      @required this.onSwipeEndToStart,
+      {required this.product,
+      required this.inCart,
+      required this.onCartChanged,
+      required this.onSwipeStartToEnd,
+      required this.onSwipeEndToStart,
       this.notDismiss = false});
 
   @override
