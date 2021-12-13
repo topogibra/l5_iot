@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:l5_iot/product.dart';
+import 'package:l5_iot/model/product.dart';
 
 class ProductPage extends StatelessWidget {
-  final Product product;
+  final ProductModel product;
   ProductPage({Key key, this.product}) : super(key: key);
 
   @override
