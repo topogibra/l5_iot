@@ -3,6 +3,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/button_builder.dart';
@@ -96,14 +98,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 Container(
                   alignment: Alignment.center,
-                  child: Text(
-                    _errorMessage.message,
-                    style: _errorMessage.error
-                        ? TextStyle(
-                            color: Colors.red,
-                            decoration: TextDecoration.underline)
-                        : TextStyle(color: Colors.black)
-                  ),
+                  child: Text(_errorMessage.message,
+                      style: _errorMessage.error
+                          ? TextStyle(
+                              color: Colors.red,
+                              decoration: TextDecoration.underline)
+                          : TextStyle(color: Colors.black)),
                 )
               ],
             ),
@@ -130,9 +130,16 @@ class _RegisterPageState extends State<RegisterPage> {
         _surnameController.text,
         _emailController.text,
         _passwordController.text);
-
     setState(() {
       _errorMessage = errorMessage;
     });
+
+    if (!errorMessage.error) {
+      Timer(
+          Duration(seconds: 3),
+          () => Navigator.of(context)
+            ..pop()
+            ..pop());
+    }
   }
 }

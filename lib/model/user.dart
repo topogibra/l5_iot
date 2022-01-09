@@ -30,9 +30,10 @@ class UserModel {
       User? user = userCredential.user;
       await user!.updateDisplayName(name + " " + surname);
       user = auth.currentUser;
-      update(userCredential);
+      update(user!);
       result.message =
           "Successfully registered $email. Sent verification email.";
+      await sendVerified();
     } on FirebaseAuthException catch (e) {
       result.error = true;
       if (e.code == "weak-password") {
@@ -44,13 +45,12 @@ class UserModel {
       print(e);
       await auth.currentUser?.delete();
     }
-    await sendVerified();
+
     return result;
   }
 
-  static void update(UserCredential userCredential) {
-    User? user = userCredential.user;
-    List<String> userName = user!.displayName!.split(" ");
+  static void update(User user) {
+    List<String> userName = user.displayName!.split(" ");
     _name = userName[0];
     _surname = userName[1];
     _email = user.email!;
@@ -65,13 +65,18 @@ class UserModel {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       bool result = await sendVerified();
+      User? user = userCredential.user;
+      update(user!);
+      _verified = !result;
+      errorMessage.login = _verified;
       if (result) {
         errorMessage.message =
             "Account not verified. Sent verification email to $email.";
         errorMessage.error = true;
-        return errorMessage;
+      } else {
+        errorMessage.message = "Logged in successfuly.";
+        errorMessage.error = false;
       }
-      update(userCredential);
     } on FirebaseAuthException catch (e) {
       errorMessage.error = true;
       if (e.code == 'user-not-found') {
@@ -81,6 +86,7 @@ class UserModel {
       }
     } catch (e) {
       print(e);
+      reset();
     }
     return errorMessage;
   }

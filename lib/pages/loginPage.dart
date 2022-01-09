@@ -72,9 +72,9 @@ class _LoginPageState extends State<LoginPage> {
                           icon: Icons.person_add,
                           backgroundColor: Colors.blueGrey,
                           onPressed: () async {
-                            // Navigator.of(context).
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                builder: (context) => RegisterPage()));
+                            Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => RegisterPage()));
                           },
                           text: 'Register',
                         ),
@@ -132,5 +132,10 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _errorMessage = errorMessage;
     });
+    if (errorMessage.login && !errorMessage.error) {
+      Navigator.of(context).pop();
+
+    }
+
   }
 }
