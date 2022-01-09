@@ -6,8 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/button_builder.dart';
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
+import 'package:l5_iot/model/user.dart';
 
 /// Entrypoint example for registering via Email/Password.
 class RegisterPage extends StatefulWidget {
@@ -20,11 +19,11 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  bool? _success;
-  String _userEmail = '';
+  ErrorMessage _errorMessage = ErrorMessage(message: "", error: false);
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +40,31 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TextFormField(
+                  controller: _firstNameController,
+                  decoration: const InputDecoration(labelText: 'First Name'),
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'First name is required';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _surnameController,
+                  decoration: const InputDecoration(labelText: 'Surname'),
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'Surname is required';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(labelText: 'Email'),
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'Please enter some text';
+                      return 'Email is required';
                     }
                     return null;
                   },
@@ -55,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: const InputDecoration(labelText: 'Password'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
+                      return 'Password is required';
                     }
                     return null;
                   },
@@ -78,11 +97,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 Container(
                   alignment: Alignment.center,
                   child: Text(
-                    _success == null
-                        ? ''
-                        : (_success!
-                            ? 'Successfully registered $_userEmail'
-                            : 'Registration failed'),
+                    _errorMessage.message,
+                    style: _errorMessage.error
+                        ? TextStyle(
+                            color: Colors.red,
+                            decoration: TextDecoration.underline)
+                        : TextStyle(color: Colors.black)
                   ),
                 )
               ],
@@ -98,23 +118,21 @@ class _RegisterPageState extends State<RegisterPage> {
     // Clean up the controller when the Widget is disposed
     _emailController.dispose();
     _passwordController.dispose();
+    _firstNameController.dispose();
+    _surnameController.dispose();
     super.dispose();
   }
 
   // Example code for registration.
   Future<void> _register() async {
-    final User? user = (await _auth.createUserWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    ))
-        .user;
-    if (user != null) {
-      setState(() {
-        _success = true;
-        _userEmail = user.email ?? '';
-      });
-    } else {
-      _success = false;
-    }
+    ErrorMessage errorMessage = await UserModel.register(
+        _firstNameController.text,
+        _surnameController.text,
+        _emailController.text,
+        _passwordController.text);
+
+    setState(() {
+      _errorMessage = errorMessage;
+    });
   }
 }

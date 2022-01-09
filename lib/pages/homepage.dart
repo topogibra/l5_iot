@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:l5_iot/pages/productPage.dart';
+import 'package:l5_iot/pages/registerPage.dart';
 import 'package:l5_iot/shoppingListItem.dart';
 
 import '../model/product.dart';
@@ -49,7 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    List<ProductModel> listProducts = (searchIcon) ? shoppingCart : searchingList;
+    List<ProductModel> listProducts =
+        (searchIcon) ? shoppingCart : searchingList;
     listProducts = (bottomIndex == 1) ? favorites : listProducts;
     var listView = Expanded(
       child: ListView.builder(
@@ -160,12 +162,17 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart), label: "Cart"),
           BottomNavigationBarItem(icon: Icon(Icons.star), label: "Favorites"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
         currentIndex: bottomIndex,
         onTap: (index) {
           setState(() {
             this.bottomIndex = index;
           });
+          if (index == 2) {
+            // if user not signed in
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => RegisterPage()));
+          }
         },
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
