@@ -16,6 +16,13 @@ class UserModel {
   static bool _verified = false;
   static bool _authenticated = false;
 
+  static String get name => _name;
+  static String get surname => _surname;
+  static String get email => _email;
+  static String get uuid => _uuid;
+  static bool get authenticated => _authenticated;
+  static bool get verified => _verified;
+
   factory UserModel() {
     return _singleton;
   }

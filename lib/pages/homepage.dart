@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:l5_iot/model/user.dart';
 import 'package:l5_iot/pages/productPage.dart';
 import 'package:l5_iot/pages/registerPage.dart';
 import 'package:l5_iot/shoppingListItem.dart';
@@ -31,6 +32,10 @@ class _MyHomePageState extends State<MyHomePage> {
       TextEditingController();
   final TextEditingController qttyTextFieldController = TextEditingController();
   final TextEditingController searchFilterController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController surnameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController uidController = TextEditingController();
 
   List<ProductModel> shoppingCart = [
     ProductModel(name: "apples", price: 2.0, quantity: 4),
@@ -42,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget? searchBar;
   bool searchIcon = true;
-
+  bool editProfile = false;
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -69,90 +74,163 @@ class _MyHomePageState extends State<MyHomePage> {
           }),
     );
 
+    Widget iconButton = IconButton(
+        onPressed: () {
+          setState(() {
+            this.searchingList = [];
+            this.searchIcon = false;
+            this.searchBar = Container(
+              width: double.infinity,
+              height: 40,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(5)),
+              child: Center(
+                child: TextField(
+                  decoration: InputDecoration(
+                      hintText: 'Search...',
+                      contentPadding: EdgeInsets.all(5),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.cancel),
+                        onPressed: () {
+                          setState(() {
+                            this.searchIcon = true;
+                            this.searchBar = Text(widget.title);
+                            this.searchFilterController.clear();
+                          });
+                        },
+                      )),
+                  controller: this.searchFilterController,
+                  onChanged: (String value) async {
+                    this.searchingList.clear();
+                    this.shoppingCart.forEach((product) {
+                      if (product.name.contains(value)) {
+                        setState(() {
+                          this.searchingList.add(product);
+                        });
+                      }
+                    });
+                  },
+                ),
+              ),
+            );
+          });
+        },
+        icon: Icon(Icons.search));
+
+    Widget body = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        if (bottomIndex != 1)
+          Padding(
+            padding: EdgeInsets.all(15),
+            child: Row(
+              children: [
+                Image.asset(
+                  "assets/toDo.png",
+                  width: 50,
+                  height: 50,
+                ),
+                Text(
+                  "Products you have to buy",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.amber,
+                    fontSize: 25,
+                  ),
+                )
+              ],
+            ),
+          ),
+        listView
+      ],
+    );
+
     if (searchBar == null) searchBar = Text(widget.title);
+
+    if (bottomIndex == 2) {
+      if (UserModel.authenticated) {
+        nameController.text = UserModel.name;
+        surnameController.text = UserModel.surname;
+        emailController.text = UserModel.email;
+        uidController.text = UserModel.uuid;
+      }
+      searchBar = Text("Profile");
+      iconButton = IconButton(
+          onPressed: () => setState(() => {editProfile = !editProfile}),
+          icon: Icon(editProfile ? Icons.edit : Icons.edit_outlined));
+      body = Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(flex: 1, child: Text("First Name")),
+                  Expanded(
+                    flex: 2,
+                    child: TextField(
+                        controller: nameController, enabled: editProfile),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(flex: 1, child: Text("Surname")),
+                  Expanded(
+                      flex: 2,
+                      child: TextField(
+                          controller: surnameController, enabled: editProfile)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(flex: 1, child: Text("Email")),
+                  Expanded(
+                      flex: 2,
+                      child: TextField(
+                          controller: emailController, enabled: false)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(flex: 1, child: Text("Uid")),
+                  Expanded(
+                      flex: 2,
+                      child: TextField(
+                          controller: uidController, enabled: editProfile)),
+                ],
+              ),
+              Padding(
+                  padding: EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(flex: 1, child: Text("Verified")),
+                      Expanded(
+                          flex: 2,
+                          child: Icon(
+                              UserModel.verified ? Icons.check : Icons.close)),
+                    ],
+                  )),
+            ],
+          ));
+    }
 
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: searchBar,
-        actions: [
-          if (this.searchIcon)
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    this.searchingList = [];
-                    this.searchIcon = false;
-                    this.searchBar = Container(
-                      width: double.infinity,
-                      height: 40,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Center(
-                        child: TextField(
-                          decoration: InputDecoration(
-                              hintText: 'Search...',
-                              contentPadding: EdgeInsets.all(5),
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.cancel),
-                                onPressed: () {
-                                  setState(() {
-                                    this.searchIcon = true;
-                                    this.searchBar = Text(widget.title);
-                                    this.searchFilterController.clear();
-                                  });
-                                },
-                              )),
-                          controller: this.searchFilterController,
-                          onChanged: (String value) async {
-                            this.searchingList.clear();
-                            this.shoppingCart.forEach((product) {
-                              if (product.name.contains(value)) {
-                                setState(() {
-                                  this.searchingList.add(product);
-                                });
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                    );
-                  });
-                },
-                icon: Icon(Icons.search))
-        ],
+        actions: [if (this.searchIcon) iconButton],
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (bottomIndex != 1)
-              Padding(
-                padding: EdgeInsets.all(15),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      "assets/toDo.png",
-                      width: 50,
-                      height: 50,
-                    ),
-                    Text(
-                      "Products you have to buy",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.amber,
-                        fontSize: 25,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            listView
-          ],
-        ),
+        child: body,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => displayDialog(context),
@@ -172,7 +250,10 @@ class _MyHomePageState extends State<MyHomePage> {
           });
           if (index == 2) {
             // if user not signed in
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
+            if (!UserModel.authenticated)
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => LoginPage()));
+            else {}
           }
         },
       ), // This trailing comma makes auto-formatting nicer for build methods.
