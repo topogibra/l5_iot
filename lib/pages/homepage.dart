@@ -5,6 +5,7 @@ import 'package:l5_iot/pages/registerPage.dart';
 import 'package:l5_iot/shoppingListItem.dart';
 
 import '../model/product.dart';
+import 'loginPage.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -171,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
           });
           if (index == 2) {
             // if user not signed in
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => RegisterPage()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
           }
         },
       ), // This trailing comma makes auto-formatting nicer for build methods.
