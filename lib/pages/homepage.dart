@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:l5_iot/model/user.dart';
@@ -9,7 +10,8 @@ import '../model/product.dart';
 import 'loginPage.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title, this.startIndex = 0})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -21,9 +23,10 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final int startIndex;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState(startIndex: startIndex);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -43,11 +46,16 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
   List<ProductModel> favorites = [];
   List<ProductModel> searchingList = [];
-  int bottomIndex = 0;
+  late int bottomIndex;
 
   Widget? searchBar;
   bool searchIcon = true;
   bool editProfile = false;
+
+  _MyHomePageState({int startIndex = 0}) {
+    this.bottomIndex = startIndex;
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -72,6 +80,11 @@ class _MyHomePageState extends State<MyHomePage> {
               notDismiss: bottomIndex == 1,
             );
           }),
+    );
+
+    Widget? floatingActionButton = FloatingActionButton(
+      onPressed: () => displayDialog(context),
+      child: Icon(Icons.add),
     );
 
     Widget iconButton = IconButton(
@@ -145,16 +158,15 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
-    if (searchBar == null) searchBar = Text(widget.title);
+    searchBar = Text(widget.title);
 
-    if (bottomIndex == 2) {
-      if (UserModel.authenticated) {
-        nameController.text = UserModel.name;
-        surnameController.text = UserModel.surname;
-        emailController.text = UserModel.email;
-        uidController.text = UserModel.uuid;
-      }
+    if (UserModel.authenticated && bottomIndex == 2) {
+      nameController.text = UserModel.name;
+      surnameController.text = UserModel.surname;
+      emailController.text = UserModel.email;
+      uidController.text = UserModel.uuid;
       searchBar = Text("Profile");
+      bool verified = FirebaseAuth.instance.currentUser?.emailVerified ?? false;
       iconButton = IconButton(
           onPressed: () => setState(() => {editProfile = !editProfile}),
           icon: Icon(editProfile ? Icons.edit : Icons.edit_outlined));
@@ -191,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                       flex: 2,
                       child: TextField(
-                          controller: emailController, enabled: false)),
+                          controller: emailController, enabled: editProfile)),
                 ],
               ),
               Row(
@@ -200,8 +212,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(flex: 1, child: Text("Uid")),
                   Expanded(
                       flex: 2,
-                      child: TextField(
-                          controller: uidController, enabled: editProfile)),
+                      child:
+                          TextField(controller: uidController, enabled: false)),
                 ],
               ),
               Padding(
@@ -218,6 +230,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   )),
             ],
           ));
+      floatingActionButton = editProfile
+          ? FloatingActionButton(
+              child: Icon(Icons.save),
+              onPressed: () => {
+                UserModel.updateUser(nameController.text,
+                    surnameController.text, emailController.text)
+              },
+            )
+          : FloatingActionButton(
+              onPressed: () {
+                UserModel.logout();
+                setState(() {
+                  bottomIndex = 0;
+                });
+              },
+              child: Icon(Icons.logout));
     }
 
     return Scaffold(
@@ -232,10 +260,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
         child: body,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => displayDialog(context),
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: floatingActionButton,
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
@@ -250,10 +275,13 @@ class _MyHomePageState extends State<MyHomePage> {
           });
           if (index == 2) {
             // if user not signed in
-            if (!UserModel.authenticated)
+            if (!UserModel.authenticated) {
+              setState(() {
+                this.bottomIndex = 0;
+              });
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => LoginPage()));
-            else {}
+            } else {}
           }
         },
       ), // This trailing comma makes auto-formatting nicer for build methods.

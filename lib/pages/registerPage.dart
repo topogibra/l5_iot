@@ -10,6 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/button_builder.dart';
 import 'package:l5_iot/model/user.dart';
 
+import 'homepage.dart';
+
 /// Entrypoint example for registering via Email/Password.
 class RegisterPage extends StatefulWidget {
   /// The page title.
@@ -135,11 +137,12 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     if (!errorMessage.error) {
-      Timer(
-          Duration(seconds: 3),
-          () => Navigator.of(context)
-            ..pop()
-            ..pop());
+      Timer(Duration(seconds: 3), () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) =>
+                MyHomePage(title: "Shopping Cart", startIndex: 2)));
+      });
     }
   }
 }

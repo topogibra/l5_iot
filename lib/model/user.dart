@@ -66,6 +66,17 @@ class UserModel {
     _authenticated = true;
   }
 
+  static Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+    reset();
+  }
+
+  static void updateUser(String name, String surname, String email) {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    auth.currentUser?.updateDisplayName(name + " " + surname);
+    if (_email != email) auth.currentUser?.verifyBeforeUpdateEmail(email);
+  }
+
   static Future<ErrorMessage> login(String email, String password) async {
     ErrorMessage errorMessage = ErrorMessage(message: "", error: false);
     try {

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/button_builder.dart';
 import 'package:l5_iot/model/user.dart';
+import 'package:l5_iot/pages/homepage.dart';
 
 import 'registerPage.dart';
 
@@ -72,9 +73,8 @@ class _LoginPageState extends State<LoginPage> {
                           icon: Icons.person_add,
                           backgroundColor: Colors.blueGrey,
                           onPressed: () async {
-                            Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => RegisterPage()));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => RegisterPage()));
                           },
                           text: 'Register',
                         ),
@@ -134,8 +134,9 @@ class _LoginPageState extends State<LoginPage> {
     });
     if (errorMessage.login && !errorMessage.error) {
       Navigator.of(context).pop();
-
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) =>
+              MyHomePage(title: "Shopping Cart", startIndex: 2)));
     }
-
   }
 }
