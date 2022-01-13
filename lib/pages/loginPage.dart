@@ -6,8 +6,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/button_builder.dart';
+import 'package:l5_iot/auth/auth.dart';
 import 'package:l5_iot/model/user.dart';
-import 'package:l5_iot/pages/homepage.dart';
+import 'package:l5_iot/pages/homepage2.dart';
 
 import 'registerPage.dart';
 
@@ -127,16 +128,16 @@ class _LoginPageState extends State<LoginPage> {
   // Example code for registration.
   Future<void> _login() async {
     ErrorMessage errorMessage =
-        await UserModel.login(_emailController.text, _passwordController.text);
+        await AuthService().login(_emailController.text, _passwordController.text);
 
     setState(() {
       _errorMessage = errorMessage;
     });
-    if (errorMessage.login && !errorMessage.error) {
-      Navigator.of(context).pop();
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) =>
-              MyHomePage(title: "Shopping Cart", startIndex: 2)));
-    }
+    // if (!errorMessage.error) {
+    //   Navigator.of(context).pop();
+    //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //       builder: (context) =>
+    //           MyHomePage(title: "Shopping Cart", startIndex: 2)));
+    // }
   }
 }

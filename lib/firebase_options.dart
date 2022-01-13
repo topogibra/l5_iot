@@ -4,6 +4,16 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
+/// Default [FirebaseOptions] for use with your Firebase apps.
+///
+/// Example:
+/// ```dart
+/// import 'firebase_options.dart';
+/// // ...
+/// await Firebase.initializeApp(
+///   options: DefaultFirebaseOptions.currentPlatform,
+/// );
+/// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -46,11 +56,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBVJt03JgOZlO9IUGiE8FY_FNZsHcEXAWk',
-    appId: '1:643543836902:ios:f5dc4e582fafcd4eec3327',
+    appId: '1:643543836902:ios:f45dda8b5bc1001aec3327',
     messagingSenderId: '643543836902',
     projectId: 'l5iot-b08c1',
     storageBucket: 'l5iot-b08c1.appspot.com',
-    iosClientId: '643543836902-gg81vmjtk6287ua434qci9o7nl2qlrdq.apps.googleusercontent.com',
-    iosBundleId: 'ro.upb.iot5',
+    iosClientId: '643543836902-vbp1qbgalbngvi4lr99be03fclmm3jmm.apps.googleusercontent.com',
+    iosBundleId: 'com.l5iot.app',
   );
 }

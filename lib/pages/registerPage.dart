@@ -8,9 +8,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/button_builder.dart';
-import 'package:l5_iot/model/user.dart';
+import 'package:l5_iot/auth/auth.dart';
+import 'package:l5_iot/model/user2.dart';
+import 'package:provider/provider.dart';
 
-import 'homepage.dart';
+import 'homepage2.dart';
 
 /// Entrypoint example for registering via Email/Password.
 class RegisterPage extends StatefulWidget {
@@ -29,8 +31,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordController = TextEditingController();
   ErrorMessage _errorMessage = ErrorMessage(message: "", error: false);
 
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -127,7 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Example code for registration.
   Future<void> _register() async {
-    ErrorMessage errorMessage = await UserModel.register(
+    ErrorMessage errorMessage = await AuthService().register(
         _firstNameController.text,
         _surnameController.text,
         _emailController.text,
@@ -136,13 +140,13 @@ class _RegisterPageState extends State<RegisterPage> {
       _errorMessage = errorMessage;
     });
 
-    if (!errorMessage.error) {
-      Timer(Duration(seconds: 3), () {
-        Navigator.of(context).pop();
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) =>
-                MyHomePage(title: "Shopping Cart", startIndex: 2)));
-      });
-    }
+    // if (!errorMessage.error) {
+    //   Timer(Duration(seconds: 3), () {
+    //     Navigator.of(context).pop();
+    //     Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //         builder: (context) =>
+    //             MyHomePage(title: "Shopping Cart", startIndex: 2)));
+    //   });
+    // }
   }
 }
