@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/button_builder.dart';
 import 'package:l5_iot/auth/auth.dart';
-import 'package:l5_iot/model/user2.dart';
+import 'package:l5_iot/model/user.dart';
 import 'package:provider/provider.dart';
 
 import 'homepage2.dart';

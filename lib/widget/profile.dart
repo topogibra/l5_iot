@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:l5_iot/model/user2.dart';
+import 'package:l5_iot/model/user.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
@@ -17,16 +17,55 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool editProfile = false;
+  List<String> _labels = ["Name", "Surname", "Email", "uid"];
+  late List<String> _changedValues = List.generate(_labels.length, (index) => "");
 
   @override
   Widget build(BuildContext context) {
     final UserModel userModel = Provider.of<UserModel>(context);
-    final UserData? userData = Provider.of<UserData?>(context);
+
+    List<String> initValues = ["", "", userModel.email, userModel.uid];
+
+    Widget body = FutureBuilder<UserData?>(
+        future: userModel.userData,
+        builder: (context, snapshot) {
+          List<Widget> children;
+          if (snapshot.hasData) {
+            initValues[0] = snapshot.data!.name;
+            initValues[1] = snapshot.data!.surname;
+            children = List.generate(
+                _labels.length,
+                (index) => TextFormField(
+                      decoration: InputDecoration(label: Text(_labels[index])),
+                      enabled: index == 2 || index == 3 ? false : editProfile,
+                      initialValue: initValues[index],
+                      onFieldSubmitted: (value) => _changedValues[index] = value,
+                      textInputAction: TextInputAction.next,
+                    ));
+            return Column(children: children);
+          } else {
+            children = const <Widget>[
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Text('Fetching Data...'),
+              )
+            ];
+            return Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: children));
+          }
+        });
 
     widget._setFAButton(editProfile
         ? FloatingActionButton(
             child: Icon(Icons.save),
-            onPressed: () => {print("Update User")},
+            onPressed: () => {print(_changedValues)},
           )
         : FloatingActionButton(
             onPressed: () {
@@ -38,6 +77,10 @@ class _ProfileState extends State<Profile> {
         onPressed: () => setState(() => {editProfile = !editProfile}),
         icon: Icon(editProfile ? Icons.edit : Icons.edit_outlined)));
 
-    return Container();
+    return Form(
+        child: Padding(
+      padding: EdgeInsetsDirectional.all(10.0),
+      child: body,
+    ));
   }
 }

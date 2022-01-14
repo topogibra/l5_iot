@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:l5_iot/model/user2.dart';
+import 'package:l5_iot/model/user.dart';
 import 'package:l5_iot/pages/homepage.dart';
 import 'package:l5_iot/pages/loginPage.dart';
 import 'package:l5_iot/pages/registerPage.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:l5_iot/auth/auth.dart';
-import 'package:l5_iot/model/user2.dart';
+import 'package:l5_iot/model/user.dart';
 import 'package:l5_iot/widget/profile.dart';
 import 'package:provider/provider.dart';
 
@@ -30,14 +30,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     setIconButton(IconButton? iconButton) {
-      Future.delayed(Duration.zero,
-          () => setState(() => _iconButton = iconButton));
+      Future.delayed(
+          Duration.zero, () => setState(() => _iconButton = iconButton));
     }
 
-    screens[2] = StreamProvider<UserData?>.value(
-        value: Provider.of<UserModel>(context).userData,
-        initialData: null,
-        child: Profile(setIconButton, setFActionButton));
+    // screens[2] = StreamProvider<UserData?>.value(
+    //     value: Provider.of<UserModel>(context).userData,
+    //     initialData: null,
+    //     child: Profile(setIconButton, setFActionButton));
+    screens[2] = Profile(setIconButton, setFActionButton);
 
     return Scaffold(
       appBar: AppBar(

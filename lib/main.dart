@@ -6,7 +6,7 @@ import 'package:l5_iot/pages/homepage2.dart';
 import 'package:l5_iot/pages/wrapper.dart';
 import 'package:provider/provider.dart';
 
-import 'model/user2.dart';
+import 'model/user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

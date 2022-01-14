@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:l5_iot/model/user2.dart';
+import 'package:l5_iot/model/user.dart';
 
 class ErrorMessage {
   String message;
