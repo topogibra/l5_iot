@@ -35,7 +35,8 @@ class AuthService {
     try {
       final UserCredential userCredential = (await _auth
           .createUserWithEmailAndPassword(email: email, password: password));
-      _userFromFirebase(userCredential.user)!.update(name: name, surname: surname);
+      _userFromFirebase(userCredential.user)!
+          .update(name: name, surname: surname);
       await sendVerified();
       result.message =
           "Successfully registered $email. Sent verification email.";
@@ -57,8 +58,8 @@ class AuthService {
   Future<ErrorMessage> login(String email, String password) async {
     ErrorMessage errorMessage = ErrorMessage(message: "", error: false);
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       bool result = await sendVerified();
       if (result) {
         errorMessage.message =
@@ -88,5 +89,12 @@ class AuthService {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future updateEmail(String oldEmail, String newEmail, String password) async {
+    ErrorMessage error = await login(oldEmail, password);
+    if(!error.error)
+      await _auth.currentUser!.updateEmail(newEmail);
+
   }
 }

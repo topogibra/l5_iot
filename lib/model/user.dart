@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:l5_iot/auth/auth.dart';
 
 class UserData {
   String name, surname;
@@ -16,7 +18,7 @@ class UserModel {
 
   DocumentReference<Object?> _userData() => _userDataRef.doc(this._uid);
 
-  void update({String? name, String? surname}) async {
+  Future update({String? name, String? surname}) async {
     if (name != null || surname != null) {
       await _userData()
           .set({"name": name ?? _name, "surname": surname ?? _surname});
@@ -31,6 +33,10 @@ class UserModel {
     dynamic data = doc.data();
     if (data != null) return UserData(data["name"], data["surname"]);
     return null;
+  }
+
+  Future updateEmail(String nEmail, String password) async {
+    await AuthService().updateEmail(email,nEmail,password);
   }
 
   String get email => _email;

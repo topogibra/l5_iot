@@ -34,11 +34,11 @@ class _MyHomePageState extends State<MyHomePage> {
           Duration.zero, () => setState(() => _iconButton = iconButton));
     }
 
-    // screens[2] = StreamProvider<UserData?>.value(
-    //     value: Provider.of<UserModel>(context).userData,
-    //     initialData: null,
-    //     child: Profile(setIconButton, setFActionButton));
-    screens[2] = Profile(setIconButton, setFActionButton);
+    resetIndex() {
+      Future.delayed(Duration.zero, () => setState(() => currentIndex = 0));
+    }
+
+    screens[2] = Profile(setIconButton, setFActionButton, resetIndex);
 
     return Scaffold(
       appBar: AppBar(
