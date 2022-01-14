@@ -10,7 +10,7 @@ class UserModel {
   final bool verified;
 
   final CollectionReference _userDataRef =
-      FirebaseFirestore.instance.collection("users");
+      FirebaseFirestore.instance.collection("userData");
 
   UserModel(this._email, this._uid, this.verified);
 
@@ -26,9 +26,11 @@ class UserModel {
     }
   }
 
-  Stream<UserData> get userData {
-    return _userData()
-        .snapshots()
-        .map((doc) => UserData(doc.get("name"), doc.get("surname")));
+  Stream<UserData?> get userData {
+    return _userData().snapshots().map((DocumentSnapshot doc) {
+      dynamic data = doc.data();
+      if (data != null) return UserData(data["name"], data["surname"]);
+      return null;
+    });
   }
 }

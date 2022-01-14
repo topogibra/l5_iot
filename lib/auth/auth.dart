@@ -11,12 +11,9 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   UserModel? _userFromFirebase(User? user, {String? name, String? surname}) {
-    UserModel? userModel = user != null
+    return user != null
         ? UserModel(user.email!, user.uid, user.emailVerified)
         : null;
-    if (name != null && surname != null)
-      userModel?.update(name: name, surname: surname);
-    return userModel;
   }
 
   Stream<UserModel?> get user {
@@ -38,6 +35,7 @@ class AuthService {
     try {
       final UserCredential userCredential = (await _auth
           .createUserWithEmailAndPassword(email: email, password: password));
+      _userFromFirebase(userCredential.user)!.update(name: name, surname: surname);
       await sendVerified();
       result.message =
           "Successfully registered $email. Sent verification email.";
@@ -82,5 +80,13 @@ class AuthService {
       print(e);
     }
     return errorMessage;
+  }
+
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      print(e);
+    }
   }
 }

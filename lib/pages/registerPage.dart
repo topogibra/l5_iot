@@ -140,13 +140,10 @@ class _RegisterPageState extends State<RegisterPage> {
       _errorMessage = errorMessage;
     });
 
-    // if (!errorMessage.error) {
-    //   Timer(Duration(seconds: 3), () {
-    //     Navigator.of(context).pop();
-    //     Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //         builder: (context) =>
-    //             MyHomePage(title: "Shopping Cart", startIndex: 2)));
-    //   });
-    // }
+    if (!errorMessage.error) {
+      Timer(Duration(seconds: 3), () {
+        Navigator.of(context).pop();
+      });
+    }
   }
 }
