@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:l5_iot/auth/auth.dart';
+import 'package:l5_iot/model/product.dart';
 import 'package:l5_iot/model/user.dart';
 import 'package:l5_iot/widget/profile.dart';
+import 'package:l5_iot/widget/shoppingCart.dart';
 import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -16,7 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> screens = [
     Center(child: Text("Cart")),
     Center(child: Text("Icon")),
-    Center(child: Text("Icon"))
+    Center(child: Text("Profile"))
   ];
 
   IconButton? _iconButton;
@@ -24,6 +26,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    UserModel user = Provider.of<UserModel>(context);
+
     setFActionButton(FloatingActionButton? floatingActionButton) {
       Future.delayed(Duration.zero,
           () => setState(() => _floatingActionButton = floatingActionButton));
@@ -38,6 +42,11 @@ class _MyHomePageState extends State<MyHomePage> {
       Future.delayed(Duration.zero, () => setState(() => currentIndex = 0));
     }
 
+    screens[0] = StreamProvider<List<ProductModel>>.value(
+      value: user.cart,
+      initialData: [],
+      child: ShoppingCart(setFActionButton,setIconButton,resetIndex),
+    );
     screens[2] = Profile(setIconButton, setFActionButton, resetIndex);
 
     return Scaffold(
@@ -56,6 +65,8 @@ class _MyHomePageState extends State<MyHomePage> {
         currentIndex: currentIndex,
         onTap: (index) => setState(() {
           currentIndex = index;
+          _floatingActionButton = null;
+          _iconButton = null;
         }),
       ),
       floatingActionButton: _floatingActionButton,

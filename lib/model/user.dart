@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:l5_iot/auth/auth.dart';
+import 'package:l5_iot/model/product.dart';
 
 class UserData {
   String name, surname;
@@ -36,7 +37,23 @@ class UserModel {
   }
 
   Future updateEmail(String nEmail, String password) async {
-    await AuthService().updateEmail(email,nEmail,password);
+    await AuthService().updateEmail(email, nEmail, password);
+  }
+
+  Stream<List<ProductModel>> get cart {
+    return FirebaseFirestore.instance
+        .collection("products")
+        .doc(uid)
+        .collection("cart")
+        .snapshots()
+        .map((event) => event.docs.map((doc) {
+              return ProductModel(
+                  name: doc["name"],
+                  price: doc["price"],
+                  quantity: doc["quantity"],
+                  uid: this._uid,
+                  id: doc.id);
+            }).toList());
   }
 
   String get email => _email;
