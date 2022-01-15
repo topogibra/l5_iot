@@ -4,7 +4,7 @@ class ProductModel {
   final String name;
   final double price;
   final double quantity;
-  late final bool isFavorite;
+  late bool isFavorite;
   late final String key;
   late final String uid;
   late String id;
@@ -27,6 +27,7 @@ class ProductModel {
 
   set favorite(bool fav) {
     this.isFavorite = fav;
+    updateCart();
   }
 
   Future updateCart() async {
@@ -48,4 +49,11 @@ class ProductModel {
 
     this.id = doc.id;
   }
+
+  Future remove() async {
+    await _productDataRef.doc(this.id).delete();
+    this.id = "";
+  }
+
+  bool operator ==(o) => o is ProductModel && id == o.id;
 }

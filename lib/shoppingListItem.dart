@@ -9,9 +9,10 @@ class ShoppingListItem extends StatelessWidget {
   final ProductModel product;
   final inCart;
   final CartChangedCallback onCartChanged;
-  final SwipeCallback onSwipeStartToEnd;
+  final Future<bool> Function(ProductModel) onSwipeStartToEnd;
   final SwipeCallback onSwipeEndToStart;
   final bool notDismiss;
+  late int index;
 
   ShoppingListItem(
       {required this.product,
@@ -19,6 +20,7 @@ class ShoppingListItem extends StatelessWidget {
       required this.onCartChanged,
       required this.onSwipeStartToEnd,
       required this.onSwipeEndToStart,
+      this.index = -1,
       this.notDismiss = false});
 
   @override
@@ -37,14 +39,14 @@ class ShoppingListItem extends StatelessWidget {
     return (notDismiss)
         ? listTile
         : Dismissible(
-            key: ValueKey(product.name),
+            key: Key(product.id),
             child: listTile,
             confirmDismiss: (direction) async {
               if (direction == DismissDirection.startToEnd) {
-                return this.onSwipeStartToEnd(product);
+                return await this.onSwipeStartToEnd(product);
               }
               if (direction == DismissDirection.endToStart) {
-                return this.onSwipeEndToStart(product);
+                return await this.onSwipeEndToStart(product);
               }
               return false;
             },

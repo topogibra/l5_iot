@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:l5_iot/auth/auth.dart';
 import 'package:l5_iot/model/product.dart';
@@ -42,11 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
       Future.delayed(Duration.zero, () => setState(() => currentIndex = 0));
     }
 
-    screens[0] = StreamProvider<List<ProductModel>>.value(
-      value: user.cart,
-      initialData: [],
-      child: ShoppingCart(setFActionButton,setIconButton,resetIndex),
-    );
+    screens[0] = ShoppingCart(setFActionButton, setIconButton, resetIndex,key: ValueKey("cart"));
+    screens[1] = ShoppingCart(setFActionButton, setIconButton, resetIndex,isFavorite: true,);
     screens[2] = Profile(setIconButton, setFActionButton, resetIndex);
 
     return Scaffold(

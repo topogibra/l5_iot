@@ -40,22 +40,26 @@ class UserModel {
     await AuthService().updateEmail(email, nEmail, password);
   }
 
-  Stream<List<ProductModel>> get cart {
-    return FirebaseFirestore.instance
+  Future<List<ProductModel>> getCart({bool favorite = false}) async {
+    QuerySnapshot q = await FirebaseFirestore.instance
         .collection("products")
         .doc(uid)
         .collection("cart")
-        .snapshots()
-        .map((event) => event.docs.map((doc) {
-              return ProductModel(
-                  name: doc["name"],
-                  price: doc["price"],
-                  quantity: doc["quantity"],
-                  uid: this._uid,
-                  id: doc.id);
-            }).toList());
-  }
+        .where('favorite', isEqualTo: favorite)
+        .get();
 
+    List<ProductModel?> result = q.docs.map((doc) {
+      return ProductModel(
+          name: doc["name"],
+          price: doc["price"],
+          quantity: doc["quantity"],
+          uid: this._uid,
+          id: doc.id);
+    }).toList();
+
+    result.removeWhere((element) => element == null);
+    return result as List<ProductModel>;
+  }
   String get email => _email;
   String get uid => _uid;
 }
