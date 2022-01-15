@@ -11,10 +11,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int currentIndex = 0;
-  List<Widget> screens = [
-    Center(child: Text("Cart")),
-    Center(child: Text("Icon")),
-    Center(child: Text("Profile"))
+  List<Widget?> screens = [
+    null,null,null
   ];
 
   IconButton? _iconButton;
@@ -41,12 +39,11 @@ class _MyHomePageState extends State<MyHomePage> {
       Future.delayed(Duration.zero, () => setState(() => _title = widget ?? Text("Shopping Cart")));
     }
 
-    screens[0] = ShoppingCart(setFActionButton, setIconButton, resetIndex,setTitle,
+    screens[0] = ShoppingCart(setFActionButton, setIconButton, setTitle,
         key: ValueKey("cart"));
     screens[1] = ShoppingCart(
       setFActionButton,
       setIconButton,
-      resetIndex,
       setTitle,
       isFavorite: true,
     );

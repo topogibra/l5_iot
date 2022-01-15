@@ -9,12 +9,11 @@ import 'package:provider/provider.dart';
 class ShoppingCart extends StatefulWidget {
   final Function(IconButton?) _setIconButton;
   final Function(FloatingActionButton?) _setFAButton;
-  final Function() _resetIndex;
   final Function(Widget?) _setTitle;
   late final bool _isFavorite;
 
   ShoppingCart(
-      this._setFAButton, this._setIconButton, this._resetIndex, this._setTitle,
+      this._setFAButton, this._setIconButton, this._setTitle,
       {bool isFavorite = false, Key? key})
       : super(key: key) {
     this._isFavorite = isFavorite;

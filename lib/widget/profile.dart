@@ -24,15 +24,16 @@ class _ProfileState extends State<Profile> {
   late List<String> _changedValues =
       List.generate(_labels.length, (index) => "");
   late String password = "";
+  late Future<UserData?> _userData;
 
   @override
   Widget build(BuildContext context) {
-    final UserModel userModel = Provider.of<UserModel>(context);
+    final UserModel user = Provider.of<UserModel>(context);
 
-    List<String> initValues = ["", "", userModel.email, userModel.uid];
-
+    List<String> initValues = ["", "", user.email, user.uid];
+    _userData = user.userData;
     Widget body = FutureBuilder<UserData?>(
-        future: userModel.userData,
+        future: _userData,
         builder: (context, snapshot) {
           List<Widget> children;
           if (snapshot.hasData) {
@@ -49,7 +50,15 @@ class _ProfileState extends State<Profile> {
                       onChanged: (value) => _changedValues[index] = value,
                       textInputAction: TextInputAction.next,
                     ));
-            return Column(children: children);
+            return RefreshIndicator(
+              onRefresh: () async {
+                UserData? userData = await user.userData;
+                setState(() {
+                  _userData = Future.value(userData);
+                });
+              },
+              child: ListView(children: children),
+            );
           } else {
             children = const <Widget>[
               SizedBox(
@@ -73,15 +82,14 @@ class _ProfileState extends State<Profile> {
         ? FloatingActionButton(
             child: Icon(Icons.save),
             onPressed: () async {
-              userModel.update(
-                  name: _changedValues[0], surname: _changedValues[1]);
+              user.update(name: _changedValues[0], surname: _changedValues[1]);
               setState(() {
                 editProfile = false;
               });
               //email
               if (_changedValues[2] != "" &&
                   _changedValues[2] != initValues[2]) {
-                await showPasswordDialog(context, userModel);
+                await showPasswordDialog(context, user);
               }
             },
           )
