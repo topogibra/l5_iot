@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:l5_iot/auth/auth.dart';
 import 'package:l5_iot/firebase_options.dart';
-import 'package:l5_iot/pages/homepage2.dart';
 import 'package:l5_iot/pages/wrapper.dart';
 import 'package:provider/provider.dart';
 

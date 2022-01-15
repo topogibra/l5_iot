@@ -12,7 +12,6 @@ class ShoppingListItem extends StatelessWidget {
   final Future<bool> Function(ProductModel) onSwipeStartToEnd;
   final SwipeCallback onSwipeEndToStart;
   final bool notDismiss;
-  late int index;
 
   ShoppingListItem(
       {required this.product,
@@ -20,7 +19,6 @@ class ShoppingListItem extends StatelessWidget {
       required this.onCartChanged,
       required this.onSwipeStartToEnd,
       required this.onSwipeEndToStart,
-      this.index = -1,
       this.notDismiss = false});
 
   @override

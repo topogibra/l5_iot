@@ -58,7 +58,7 @@ class AuthService {
   Future<ErrorMessage> login(String email, String password) async {
     ErrorMessage errorMessage = ErrorMessage(message: "", error: false);
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       bool result = await sendVerified();
       if (result) {

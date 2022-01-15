@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:l5_iot/model/user.dart';
 import 'package:l5_iot/pages/homepage.dart';
 import 'package:l5_iot/pages/loginPage.dart';
-import 'package:l5_iot/pages/registerPage.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatefulWidget {

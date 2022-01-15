@@ -76,8 +76,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
             onCartChanged: onCartChanged,
             onSwipeEndToStart: onSwipeEndToStart,
             onSwipeStartToEnd: onSwipeStartToEnd,
-            notDismiss: widget._isFavorite,
-            index: index,
+            notDismiss: widget._isFavorite
           );
         },
       );

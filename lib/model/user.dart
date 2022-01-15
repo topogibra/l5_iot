@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:l5_iot/auth/auth.dart';
 import 'package:l5_iot/model/product.dart';
 

@@ -1,11 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:l5_iot/auth/auth.dart';
-import 'package:l5_iot/model/product.dart';
-import 'package:l5_iot/model/user.dart';
 import 'package:l5_iot/widget/profile.dart';
 import 'package:l5_iot/widget/shoppingCart.dart';
-import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -28,8 +23,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel user = Provider.of<UserModel>(context);
-
     setFActionButton(FloatingActionButton? floatingActionButton) {
       Future.delayed(Duration.zero,
           () => setState(() => _floatingActionButton = floatingActionButton));

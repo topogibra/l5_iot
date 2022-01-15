@@ -4,12 +4,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/button_builder.dart';
 import 'package:l5_iot/auth/auth.dart';
-import 'package:l5_iot/model/user.dart';
-import 'package:l5_iot/pages/homepage2.dart';
-
 import 'registerPage.dart';
 
 /// Entrypoint example for registering via Email/Password.

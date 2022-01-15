@@ -55,5 +55,4 @@ class ProductModel {
     this.id = "";
   }
 
-  bool operator ==(o) => o is ProductModel && id == o.id;
 }
