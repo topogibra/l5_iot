@@ -28,8 +28,10 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    final UserModel user = Provider.of<UserModel>(context);
+    final UserModel? user = Provider.of<UserModel?>(context);
 
+    if (user == null) return _loadingScreen();
+    
     List<String> initValues = ["", "", user.email, user.uid];
     _userData = user.userData;
     Widget body = FutureBuilder<UserData?>(
@@ -60,21 +62,7 @@ class _ProfileState extends State<Profile> {
               child: ListView(children: children),
             );
           } else {
-            children = const <Widget>[
-              SizedBox(
-                width: 60,
-                height: 60,
-                child: CircularProgressIndicator(),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Text('Fetching Data...'),
-              )
-            ];
-            return Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: children));
+            return _loadingScreen();
           }
         });
 
@@ -146,5 +134,22 @@ class _ProfileState extends State<Profile> {
             actions: [TextButton(onPressed: finish, child: Text("Submit"))],
           );
         });
+  }
+
+  Widget _loadingScreen() {
+    List<Widget> children = const <Widget>[
+      SizedBox(
+        width: 60,
+        height: 60,
+        child: CircularProgressIndicator(),
+      ),
+      Padding(
+        padding: EdgeInsets.only(top: 16),
+        child: Text('Fetching Data...'),
+      )
+    ];
+    return Center(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, children: children));
   }
 }
