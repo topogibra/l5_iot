@@ -10,9 +10,11 @@ class ShoppingCart extends StatefulWidget {
   final Function(IconButton?) _setIconButton;
   final Function(FloatingActionButton?) _setFAButton;
   final Function() _resetIndex;
+  final Function(Widget?) _setTitle;
   late final bool _isFavorite;
 
-  ShoppingCart(this._setFAButton, this._setIconButton, this._resetIndex,
+  ShoppingCart(
+      this._setFAButton, this._setIconButton, this._resetIndex, this._setTitle,
       {bool isFavorite = false, Key? key})
       : super(key: key) {
     this._isFavorite = isFavorite;
@@ -27,29 +29,35 @@ class _ShoppingCartState extends State<ShoppingCart> {
   final TextEditingController priceTextFieldController =
       TextEditingController();
   final TextEditingController qttyTextFieldController = TextEditingController();
-  late Future<List<ProductModel>> shoppingCart;
+  final TextEditingController searchFilterController = TextEditingController();
+  late Future<List<ProductModel>> _shoppingCart, _searchingList;
   late Future<List<ProductModel>> Function() _getCarts;
   late UserModel user;
   bool _init = true;
 
+  bool showSearchIcon = true;
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<UserModel>(context);
+
     widget._setFAButton(FloatingActionButton(
       onPressed: () => displayDialog(context, user),
       child: Icon(Icons.add),
     ));
 
+    widget._setIconButton(_iconButton());
     if (_init) {
       _getCarts = () {
         return user.getCart(favorite: widget._isFavorite);
       };
-      shoppingCart = _getCarts();
+      _shoppingCart = _getCarts();
+      _searchingList = Future.value([]);
       _init = false;
     }
 
     return FutureBuilder<List<ProductModel>>(
-      future: shoppingCart,
+      future: !showSearchIcon ? _searchingList : _shoppingCart,
       builder: (context, snapshot) {
         return RefreshIndicator(
             child: _listView(snapshot), onRefresh: _pullRefresh);
@@ -93,7 +101,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   Future<void> _pullRefresh() async {
     List<ProductModel> freshShoppingCart = await _getCarts();
     setState(() {
-      shoppingCart = Future.value(freshShoppingCart);
+      _shoppingCart = Future.value(freshShoppingCart);
     });
   }
 
@@ -149,10 +157,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                         quantity: double.parse(qttyTextFieldController.text),
                         uid: user.uid);
                     await product.add();
-                    List<ProductModel> sCart = await shoppingCart;
+                    List<ProductModel> sCart = await _shoppingCart;
                     sCart.add(product);
                     setState(() {
-                      shoppingCart = Future.value(sCart);
+                      _shoppingCart = Future.value(sCart);
                     });
                   }
 
@@ -180,10 +188,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }
 
   Future<bool> onSwipeStartToEnd(ProductModel product) async {
-    List<ProductModel> sCart = await shoppingCart;
+    List<ProductModel> sCart = await _shoppingCart;
     sCart.remove(product);
     setState(() {
-      shoppingCart = Future.value(sCart);
+      _shoppingCart = Future.value(sCart);
     });
     await product.remove();
     return true;
@@ -192,5 +200,57 @@ class _ShoppingCartState extends State<ShoppingCart> {
   bool onSwipeEndToStart(ProductModel product) {
     product.favorite = true;
     return false;
+  }
+
+  IconButton? _iconButton() {
+    return showSearchIcon
+        ? IconButton(
+            onPressed: () {
+              setState(() {
+                this._searchingList = Future.value([]);
+                this.showSearchIcon = false;
+                widget._setTitle(Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Center(
+                    child: TextField(
+                      decoration: InputDecoration(
+                          hintText: 'Search...',
+                          contentPadding: EdgeInsets.all(5),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.cancel),
+                            onPressed: () {
+                              setState(() {
+                                this.showSearchIcon = true;
+                                this.searchFilterController.clear();
+                                widget._setTitle(null);
+                              });
+                            },
+                          )),
+                      controller: this.searchFilterController,
+                      onChanged: (String value) async {
+                        List<ProductModel> shoppingCart =
+                            await this._shoppingCart;
+                        List<ProductModel> searchingList = [];
+                        shoppingCart.forEach((product) {
+                          if (product.name.contains(value)) {
+                            searchingList.add(product);
+                          }
+                        });
+                        setState(() {
+                          this._shoppingCart = Future.value(shoppingCart);
+                          this._searchingList = Future.value(searchingList);
+                        });
+                      },
+                    ),
+                  ),
+                ));
+              });
+            },
+            icon: Icon(Icons.search))
+        : null;
   }
 }

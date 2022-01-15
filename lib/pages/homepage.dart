@@ -24,6 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   IconButton? _iconButton;
   FloatingActionButton? _floatingActionButton;
+  Widget? _title = Text("Shopping Cart");
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +44,24 @@ class _MyHomePageState extends State<MyHomePage> {
       Future.delayed(Duration.zero, () => setState(() => currentIndex = 0));
     }
 
-    screens[0] = ShoppingCart(setFActionButton, setIconButton, resetIndex,key: ValueKey("cart"));
-    screens[1] = ShoppingCart(setFActionButton, setIconButton, resetIndex,isFavorite: true,);
+    setTitle(Widget? widget) {
+      Future.delayed(Duration.zero, () => setState(() => _title = widget ?? Text("Shopping Cart")));
+    }
+
+    screens[0] = ShoppingCart(setFActionButton, setIconButton, resetIndex,setTitle,
+        key: ValueKey("cart"));
+    screens[1] = ShoppingCart(
+      setFActionButton,
+      setIconButton,
+      resetIndex,
+      setTitle,
+      isFavorite: true,
+    );
     screens[2] = Profile(setIconButton, setFActionButton, resetIndex);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Shopping Cart"),
+        title: _title,
         actions: [if (_iconButton != null) _iconButton as Widget],
       ),
       body: screens[currentIndex],
