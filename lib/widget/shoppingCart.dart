@@ -76,7 +76,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
             onCartChanged: onCartChanged,
             onSwipeEndToStart: onSwipeEndToStart,
             onSwipeStartToEnd: onSwipeStartToEnd,
-            notDismiss: widget._isFavorite
+            inFavorite: widget._isFavorite
           );
         },
       );
@@ -196,8 +196,13 @@ class _ShoppingCartState extends State<ShoppingCart> {
     return true;
   }
 
-  bool onSwipeEndToStart(ProductModel product) {
-    product.favorite = true;
+  Future<bool> onSwipeEndToStart(ProductModel product) async{
+    List<ProductModel> sCart = await _shoppingCart;
+    sCart.remove(product);
+    setState(() {
+      _shoppingCart = Future.value(sCart);
+    });
+    product.favorite = !widget._isFavorite;
     return false;
   }
 

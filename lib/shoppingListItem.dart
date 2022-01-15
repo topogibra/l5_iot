@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import 'model/product.dart';
 
 typedef void CartChangedCallback(ProductModel product, bool inCart);
-typedef bool SwipeCallback(ProductModel product);
+typedef Future<bool> SwipeCallback(ProductModel product);
 
 class ShoppingListItem extends StatelessWidget {
   final ProductModel product;
   final inCart;
   final CartChangedCallback onCartChanged;
-  final Future<bool> Function(ProductModel) onSwipeStartToEnd;
-  final SwipeCallback onSwipeEndToStart;
-  final bool notDismiss;
+  final SwipeCallback onSwipeEndToStart,onSwipeStartToEnd;
+  final bool inFavorite;
 
   ShoppingListItem(
       {required this.product,
@@ -19,7 +18,7 @@ class ShoppingListItem extends StatelessWidget {
       required this.onCartChanged,
       required this.onSwipeStartToEnd,
       required this.onSwipeEndToStart,
-      this.notDismiss = false});
+      this.inFavorite = false});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +33,7 @@ class ShoppingListItem extends StatelessWidget {
       },
     );
 
-    return (notDismiss)
-        ? listTile
-        : Dismissible(
+    return Dismissible(
             key: Key(product.id),
             child: listTile,
             confirmDismiss: (direction) async {
@@ -59,11 +56,11 @@ class ShoppingListItem extends StatelessWidget {
               ),
             ),
             secondaryBackground: Container(
-              color: Colors.green[500],
+              color: inFavorite ? Colors.orange :Colors.green,
               padding: EdgeInsets.symmetric(horizontal: 20),
               alignment: AlignmentDirectional.centerEnd,
               child: Icon(
-                Icons.star,
+                inFavorite ? Icons.star_border : Icons.star,
                 color: Colors.white,
               ),
             ),
